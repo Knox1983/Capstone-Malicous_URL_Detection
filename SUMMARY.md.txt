@@ -83,7 +83,6 @@ curl -X POST http://<EC2-IP>:5000/batch_predict \
   -d '{"urls": ["https://www.google.com", "http://phishingsite.io/login"]}'
 ```
 
-## 📌 Next Steps (if extended)
-- Add live threat feeds for real-time classification
-- Create a Flask web UI for input/upload and results
-- Track detection performance over time
+## 📌Extended
+- Flask web UI http://<your-ec2-ip>:5000
+

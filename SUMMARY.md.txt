@@ -1,0 +1,89 @@
+# 📊 Summary Report: Malicious URL Detection
+
+This project builds and evaluates a machine learning model using XGBoost to classify URLs as either malicious or benign. It supports flexible input formats (.txt or .csv), performs feature extraction, and returns predictions via a deployed API.
+
+## ✅ Key Achievements
+- Trained an XGBoost model with ~1 million URL samples.
+- Achieved solid performance (Precision/Recall/F1 tracked).
+- Automatically extracted features like:
+  - URL length
+  - Number of digits
+  - Special characters
+  - Presence of IP addresses
+  - Suspicious keywords
+- Generated output predictions and filtered malicious links.
+
+## 📂 Outputs
+- `predicted_urls.csv`: All predictions (with 0 or 1)
+- `malicious_only.csv`: Filtered malicious URLs
+- Confusion matrix and feature importance plots saved as PNGs
+
+## 🚀 Deployment
+- Trained locally in PyCharm
+- Deployed to AWS EC2
+- Model inference works on both `.txt` and `.csv` inputs
+
+---
+
+# 🌐 Deployed API Details
+
+## Platform & Hosting
+- **Cloud Provider:** AWS EC2 (t2.micro, Free Tier)
+- **OS:** Ubuntu 22.04
+- **Access:** Public IP on port `5000`
+
+## Flask REST API
+- **Framework:** Flask
+- **Endpoints:**
+  - `POST /predict` – Predict a single URL
+  - `POST /batch_predict` – Predict a list of URLs
+  - `GET /health` – Health check status
+  - `GET /model_info` – Returns model details
+- **Model:** XGBoost loaded via `joblib`
+- **Logs:** Saved to `logs/predictions_log.jsonl` (UTC timestamps)
+
+## Model Features
+
+| Feature                  | Description |
+|--------------------------|-------------|
+| `url_length`             | Total characters in the URL |
+| `num_digits`             | Number of digits in the URL |
+| `num_special_chars`      | Count of `-_%@` symbols |
+| `has_ip`                 | Presence of raw IP address |
+| `keyword_flag`           | Flags presence of keywords like `login`, `verify`, `secure` |
+
+## Enhancements Implemented
+
+- ✅ **Batch prediction route (`/batch_predict`)**
+- ✅ **CORS enabled for cross-origin requests**
+- ✅ **Model metadata route (`/model_info`)**
+- ✅ **Health check route (`/health`)**
+- ✅ **Logging of each prediction with probability**
+- ✅ **Error handling with meaningful messages**
+
+## ☁️ Cloud Considerations
+- Large files (>50MB) hosted on Google Drive:
+  [Cleaned Data CSV (80MB)](https://drive.google.com/file/d/1CEEghOidlx3ZKLbr0e76PEmyOjTtwWpl/view?usp=sharing)
+
+---
+
+## How to Use
+
+### Example Curl Request (Single URL)
+```bash
+curl -X POST http://<EC2-IP>:5000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"url": "http://login.fake-site.com"}'
+```
+
+### Example Curl Request (Batch)
+```bash
+curl -X POST http://<EC2-IP>:5000/batch_predict \
+  -H "Content-Type: application/json" \
+  -d '{"urls": ["https://www.google.com", "http://phishingsite.io/login"]}'
+```
+
+## 📌 Next Steps (if extended)
+- Add live threat feeds for real-time classification
+- Create a Flask web UI for input/upload and results
+- Track detection performance over time

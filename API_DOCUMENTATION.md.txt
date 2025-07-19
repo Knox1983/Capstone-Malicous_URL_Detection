@@ -1,0 +1,120 @@
+# 📘 Malicious URL Detection API Documentation
+
+This REST API serves a trained XGBoost model to predict whether a URL is malicious or benign.
+
+---
+
+## 🔗 Base URL
+```
+http://<your-ec2-public-ip>:5000
+```
+
+---
+
+## ✅ Health Check
+
+**Endpoint:** `/health`  
+**Method:** `GET`
+
+**Response:**
+```json
+{
+  "status": "OK",
+  "message": "API is running"
+}
+```
+
+---
+
+## 🧠 Model Info
+
+**Endpoint:** `/model_info`  
+**Method:** `GET`
+
+**Response:**
+```json
+{
+  "model_type": "XGBoost",
+  "features": ["url_length", "num_digits", "num_special_chars", "has_ip", "keyword_flag"]
+}
+```
+
+---
+
+## 🔍 Single URL Prediction
+
+**Endpoint:** `/predict`  
+**Method:** `POST`  
+**Request Body:**
+```json
+{
+  "url": "http://example.com/login"
+}
+```
+
+**Success Response:**
+```json
+{
+  "prediction": 1,
+  "probability": 0.8724
+}
+```
+
+**Error Response (missing key):**
+```json
+{
+  "error": "Missing \"url\" in request"
+}
+```
+
+---
+
+## 📦 Batch Prediction
+
+**Endpoint:** `/batch_predict`  
+**Method:** `POST`  
+**Request Body:**
+```json
+{
+  "urls": [
+    "http://example.com/login",
+    "https://google.com"
+  ]
+}
+```
+
+**Response:**
+```json
+[
+  {
+    "url": "http://example.com/login",
+    "prediction": 1,
+    "probability": 0.8724
+  },
+  {
+    "url": "https://google.com",
+    "prediction": 0,
+    "probability": 0.0234
+  }
+]
+```
+
+---
+
+## 🛠 Logging
+
+- All predictions (single or batch) are logged to `logs/predictions_log.jsonl`
+- Each entry includes timestamp, URL, prediction, and probability
+
+---
+
+## 🌐 CORS Support
+
+This API supports CORS for cross-origin browser requests.
+
+---
+
+## ❗ Notes
+
+- Use only for educational or testing purposes
+- Do not expose this without HTTPS or security in production

@@ -34,13 +34,20 @@ def load_input_file(path):
 # Main Prediction Logic
 def main():
     # Load model
-    model_path = r"C:\Users\red_l\PycharmProjects\MaliciousURL\model\xgboost_model.pkl"
+    model_path = "xgboost_model.pkl"
     model = joblib.load(model_path)
     print(f"Loaded model from: {model_path}")
 
     # Input file (change this to test different formats txt or csv)
-    input_path = r"C:\Users\red_l\PycharmProjects\MaliciousURL\Data\new_urls.csv"
+    input_path = "new_urls.csv"
     df = load_input_file(input_path)
+
+    # 🧪 Feature extraction
+    df = extract_features(df)
+
+    # ❗ Drop label if accidentally included
+    if "label" in df.columns:
+        df = df.drop(columns=["label"])
 
     # Extract features and predict
     df = extract_features(df)
@@ -59,3 +66,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+

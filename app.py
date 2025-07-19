@@ -1,11 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
+from datetime import datetime, timezone
 import joblib
 from utils import preprocess_url
-from datetime import datetime
 import json
 import os
 
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 
@@ -19,17 +20,17 @@ model_info = {
 # Ensure logs folder exists
 os.makedirs('logs', exist_ok=True)
 
-# Health check
+# Health Check Route
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "OK", "message": "API is running"}), 200
 
-# Model info
+# Model Info Route
 @app.route('/model_info', methods=['GET'])
 def model_details():
     return jsonify(model_info), 200
 
-# Single prediction
+# Single Prediction Route
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -38,12 +39,15 @@ def predict():
             return jsonify({'error': 'Missing "url" in request'}), 400
 
         url = data['url']
+        if not url or not url.startswith(('http://', 'https://')):
+            return jsonify({'error': 'Invalid URL format'}), 400
+
         features_df = preprocess_url(url)
         prediction = int(model.predict(features_df)[0])
         proba = float(model.predict_proba(features_df)[0][1])
 
         log_entry = {
-            'timestamp': str(datetime.utcnow()),
+            'timestamp': datetime.now(timezone.utc).isoformat(),
             'url': url,
             'prediction': prediction,
             'probability': proba
@@ -54,9 +58,11 @@ def predict():
         return jsonify({'prediction': prediction, 'probability': round(proba, 4)}), 200
 
     except Exception as e:
+        with open('logs/error_log.txt', 'a') as err_log:
+            err_log.write(f"{datetime.utcnow()} - {str(e)}\n")
         return jsonify({'error': str(e)}), 500
 
-# Batch predictions
+# Batch Prediction Route
 @app.route('/batch_predict', methods=['POST'])
 def batch_predict():
     try:
@@ -80,7 +86,36 @@ def batch_predict():
         return jsonify(results), 200
 
     except Exception as e:
+        with open('logs/error_log.txt', 'a') as err_log:
+            err_log.write(f"{datetime.utcnow()} - {str(e)}\n")
         return jsonify({'error': str(e)}), 500
 
+# UI interface
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    results = []
+    if request.method == 'POST':
+        urls_text = request.form['urls']
+        url_list = [u.strip() for u in urls_text.strip().splitlines() if u.strip()]
+        for url in url_list:
+            try:
+                features_df = preprocess_url(url)
+                prediction = int(model.predict(features_df)[0])
+                proba = float(model.predict_proba(features_df)[0][1])
+                results.append({
+                    'url': url,
+                    'prediction': prediction,
+                    'probability': round(proba, 4)
+                })
+            except Exception as e:
+                results.append({
+                    'url': url,
+                    'error': str(e)
+                })
+    return render_template('index.html', results=results)
+
+
+# Run the App
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+

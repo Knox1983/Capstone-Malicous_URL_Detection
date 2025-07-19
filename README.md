@@ -18,6 +18,7 @@ Capstone_Malicious_URL_Detection/
 ├── train_model.py # Model training script
 ├── inference.py # URL prediction script (CSV or TXT)
 ├── data_cleaning_and_features.py # Dataset cleaning + feature script
+├── Malicious_URL_API_Demo.ipynb
 ├── README.md # Project documentation
 ├── API_DOCUMENTATION.md # Project documentation
 ├── summary.md # Project documentation

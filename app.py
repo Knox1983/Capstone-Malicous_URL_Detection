@@ -43,12 +43,14 @@ def predict():
             return jsonify({'error': 'Invalid URL format'}), 400
 
         features_df = preprocess_url(url)
+        print("Extracted features:", features_df.to_dict(orient='records')[0])
         prediction = int(model.predict(features_df)[0])
         proba = float(model.predict_proba(features_df)[0][1])
 
         log_entry = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'url': url,
+            'features': features_df.to_dict(orient='records')[0],
             'prediction': prediction,
             'probability': proba
         }
@@ -75,10 +77,12 @@ def batch_predict():
         results = []
         for url in urls:
             features_df = preprocess_url(url)
+            print("Extracted features:", features_df.to_dict(orient='records')[0])
             prediction = int(model.predict(features_df)[0])
             proba = float(model.predict_proba(features_df)[0][1])
             results.append({
                 'url': url,
+                'features': features_df.to_dict(orient='records')[0],
                 'prediction': prediction,
                 'probability': round(proba, 4)
             })
@@ -118,4 +122,3 @@ def home():
 # Run the App
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
-

@@ -2,6 +2,7 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from utils import preprocess_url
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
@@ -18,8 +19,9 @@ def main():
     print(f"Loaded dataset with shape: {dataset.shape}")
 
     # Prepare features and labels
-    X = dataset.drop(columns=["url", "label"])
-    y = dataset["label"]
+    feature_rows = [preprocess_url(url).iloc[0] for url in dataset['url']]
+    X = pd.DataFrame(feature_rows)
+    y = dataset['label']
 
     # Train/test split
     X_train, X_test, y_train, y_test = train_test_split(
@@ -33,8 +35,10 @@ def main():
         n_estimators=100,
         max_depth=6,
         learning_rate=0.1,
+        scale_pos_weight=2.35,
         eval_metric="logloss",
-        random_state=42
+        random_state=42,
+        use_label_encoder=False,
     )
     model.fit(X_train, y_train)
     print("Training complete.")
@@ -72,6 +76,7 @@ def main():
     joblib.dump(model, model_path)
     print(f"Model saved to: {model_path}")
     print(f"Visuals saved to: {visual_dir}")
+    print(dataset['label'].value_counts())
 
 if __name__ == "__main__":
     main()

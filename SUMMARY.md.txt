@@ -11,6 +11,9 @@ This project builds and evaluates a machine learning model using XGBoost to clas
   - Special characters
   - Presence of IP addresses
   - Suspicious keywords
+  - Number of subdomains
+  - '@' symbol usage
+  - URL shortening services
 - Generated output predictions and filtered malicious links.
 
 ## 📂 Outputs
@@ -51,6 +54,9 @@ This project builds and evaluates a machine learning model using XGBoost to clas
 | `num_special_chars`      | Count of `-_%@` symbols |
 | `has_ip`                 | Presence of raw IP address |
 | `keyword_flag`           | Flags presence of keywords like `login`, `verify`, `secure` |
+| `contains_at_symbol`     | Checks if '@' symbol is in the URL |
+| `num_subdomains`         | Count of subdomain segments in the URL |
+| `uses_shortener`         | Indicates use of known URL shortening services |
 
 ## Enhancements Implemented
 
@@ -85,4 +91,3 @@ curl -X POST http://<EC2-IP>:5000/batch_predict \
 
 ## 📌Extended
 - Flask web UI http://<your-ec2-ip>:5000
-

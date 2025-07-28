@@ -85,22 +85,25 @@ These diverse sources improve generalization, enhance reliability, and ensure re
 
 ## How to Use
 
-### Example Curl Request (Single URL)
+### Example Curl Request (current Deployment) (Single URL)
 ```bash
-curl -X POST http://<EC2-IP>:5000/predict \
+curl -X POST http://18.118.217.168:5000/predict \
   -H "Content-Type: application/json" \
   -d '{"url": "http://login.fake-site.com"}'
 ```
 
-### Example Curl Request (Batch)
+### Example Curl Request (current Deployment)(Batch)
 ```bash
-curl -X POST http://<EC2-IP>:5000/batch_predict \
+curl -X POST http://18.118.217.168:5000/batch_predict \
   -H "Content-Type: application/json" \
   -d '{"urls": ["https://www.google.com", "http://phishingsite.io/login"]}'
 ```
 
+
 ## 📌Extended
 - Flask web UI http://<your-ec2-ip>:5000
+Example(current Deployment):
+(Flask web UI http://18.118.217.168:5000) 
 
 ## 📁 Project Structure
 

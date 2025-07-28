@@ -7,6 +7,9 @@ This REST API serves a trained XGBoost model to predict whether a URL is malicio
 ## 🔗 Base URL
 ```
 http://<your-ec2-public-ip>:5000
+Example(current Deployment):
+(http://18.118.217.168:5000) 
+
 ```
 
 ---
